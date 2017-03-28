@@ -2,3 +2,8 @@
 JavaMusicBot.iml
 config.toml
 target
+/hs_err_pid19229.log
+/.gitignore
+/src/main/main.iml
+!/src/
+!/.gitignore
