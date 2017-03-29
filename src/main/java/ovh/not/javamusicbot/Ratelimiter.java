@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.entities.User;
 
 public final class Ratelimiter {
     private static final Map<String, Long> ratelimitMap = new ConcurrentHashMap<>();
+    private static final int threshold = 1; // time since last message was sent in seconds
 
     private Ratelimiter() {}
 
@@ -13,10 +14,10 @@ public final class Ratelimiter {
         // Check ratelimits:
         if(ratelimitMap.containsKey(user.getId())) {
             long time = ratelimitMap.get(user.getId());
-            if(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time) <= 1) {
-                ratelimitMap.put(user.getId(), System.currentTimeMillis());
+            if(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time) <= threshold) {
                 return true;
             } else {
+                ratelimitMap.put(user.getId(), System.currentTimeMillis());
                 return false;
             }
         } else {

@@ -32,18 +32,17 @@ class Listener extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
 		if(config.banlist.contains(event.getAuthor().getId()) ||
                 (!event.isFromType(ChannelType.PRIVATE) && config.banlist.contains(event.getGuild().getId()))) {
-		    event.getGuild().leave().queue();                                                                         // notem
-		    return;                                                                                                   //
-		}                                                                                                             //
+		    event.getGuild().leave().queue();
+		    return;
+		}
 
         User author = event.getAuthor();
-		if(Ratelimiter.isRatelimited(author)) {
-            System.out.println("@" + author.getName() + " is ratelimited! { authorId: " +
-                    author.getId() + ", guildId: " + event.getGuild().getId() + "}");
+        if (author.isBot() || author.getId().equalsIgnoreCase(event.getJDA().getSelfUser().getId())) {
             return;
         }
-
-        if (author.isBot() || author.getId().equalsIgnoreCase(event.getJDA().getSelfUser().getId())) {
+        if(Ratelimiter.isRatelimited(author)) {
+            System.out.println("@" + author.getName() + " is ratelimited! { authorId: " +
+                    author.getId() + ", guildId: " + event.getGuild().getId() + "}");
             return;
         }
         String content = event.getMessage().getContent();
@@ -70,10 +69,10 @@ class Listener extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-        if(config.banlist.contains(event.getGuild().getId())) {     //
-            event.getGuild().leave().queue();                       // notem
-            return;                                                 //
-        }                                                           //
+        if(config.banlist.contains(event.getGuild().getId())) {
+            event.getGuild().leave().queue();
+            return;
+        }
 
         int guilds = event.getJDA().getGuilds().size();
         System.out.println(String.format("Joined guild: %s - #%d", event.getGuild().getName(), guilds));
